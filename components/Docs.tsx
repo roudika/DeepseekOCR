@@ -17,7 +17,7 @@ export const Docs: React.FC<DocsProps> = ({ theme, toggleTheme, onNavigate }) =>
       <div className="flex-1 w-full relative pt-20">
         <div className="w-full h-full overflow-hidden">
             <iframe 
-                src="https://plastic-bedbug-b4d.notion.site/ebd//2a4cd922819b80538cf5f6fcd533bd91?v=2a4cd922819b8000a256000cf7d07713" 
+                src="https://plastic-bedbug-b4d.notion.site/ebd//2cbcd922819b807fb871ddd99fc57932?v=2cbcd922819b81a09f45000c933ea2d4" 
                 title="KloudiHub Docs"
                 className="w-full border-none bg-white"
                 style={{
