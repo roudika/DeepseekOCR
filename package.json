@@ -9,12 +9,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "react": "^19.2.3",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
     "clsx": "^2.1.1",
-    "react-dom": "^19.2.3",
     "tailwind-merge": "^3.4.0",
-    "framer-motion": "^12.23.26",
-    "lucide-react": "^0.561.0"
+    "framer-motion": "11.0.8",
+    "lucide-react": "0.330.0",
+    "three": "0.161.0",
+    "@react-three/fiber": "8.15.16",
+    "@react-three/drei": "9.99.0",
+    "gsap": "3.12.5",
+    "@gsap/react": "2.1.0"
   },
   "devDependencies": {
     "@types/node": "^22.14.0",

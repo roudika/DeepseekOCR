@@ -20,6 +20,11 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToPricing = () => {
+    document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+    setMobileMenuOpen(false);
+  };
+
   return (
     <nav className={cn(
       "fixed top-0 w-full z-50 transition-all duration-300 border-b border-transparent",
@@ -57,7 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
             <a href="#" className="text-slate-700 dark:text-white font-medium hover:text-brand-secondary transition-colors text-sm">Log in</a>
-            <Button variant="primary" size="sm" className="rounded-lg shadow-none">
+            <Button variant="primary" size="sm" className="rounded-lg shadow-none" onClick={scrollToPricing}>
               Get API Key
             </Button>
           </div>
@@ -89,7 +94,7 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
             <a href="#pricing" className="text-slate-700 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white block" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
             <hr className="border-slate-200 dark:border-white/10" />
             <a href="#" className="text-slate-700 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white block">Log in</a>
-            <Button variant="primary" className="w-full">Get API Key</Button>
+            <Button variant="primary" className="w-full" onClick={scrollToPricing}>Get API Key</Button>
           </div>
         </div>
       )}

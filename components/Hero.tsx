@@ -1,34 +1,109 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useEffect, useState } from 'react';
 import { ArrowRight, Terminal, Sparkles, Database } from 'lucide-react';
 import { Button } from './ui/Button';
-import { fadeInUp } from '../utils';
+import { WebGLBackground } from './ui/WebGLBackground';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+
+// Simplified way to get theme context if not passing props directly, 
+// but for now we'll check the document class manually for the WebGL component
+// or accept it from parent if we refactor. 
+// Assuming App passes nothing here, we'll detect theme from DOM.
 
 export const Hero: React.FC = () => {
-  return (
-    <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-slate-50 dark:bg-navy-900 transition-colors duration-300">
-      
-      {/* Abstract Neural Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-[20%] -left-[10%] w-[600px] h-[600px] bg-brand-primary/10 dark:bg-brand-primary/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[100px] opacity-60 dark:opacity-40 animate-blob" />
-        <div className="absolute top-[30%] -right-[10%] w-[500px] h-[500px] bg-purple-500/10 dark:bg-purple-500/20 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[100px] opacity-60 dark:opacity-40 animate-blob animation-delay-2000" />
-        <div className="absolute -bottom-[20%] left-[20%] w-[600px] h-[600px] bg-brand-secondary/10 dark:bg-brand-secondary/10 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[100px] opacity-50 dark:opacity-30 animate-blob animation-delay-4000" />
-      </div>
+  const containerRef = useRef<HTMLDivElement>(null);
+  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const sublineRef = useRef<HTMLParagraphElement>(null);
+  const buttonsRef = useRef<HTMLDivElement>(null);
+  const featuresRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
-      {/* Grid Overlay */}
-      <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 dark:opacity-20" />
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]" />
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          const isDark = document.documentElement.classList.contains('dark');
+          setTheme(isDark ? 'dark' : 'light');
+        }
+      });
+    });
+    
+    observer.observe(document.documentElement, { attributes: true });
+    // Initial check
+    setTheme(document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+
+    return () => observer.disconnect();
+  }, []);
+
+  useGSAP(() => {
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+    // Initial State Setters to prevent flash of unstyled content
+    gsap.set([headlineRef.current, sublineRef.current, buttonsRef.current, featuresRef.current], { 
+      y: 50, 
+      opacity: 0 
+    });
+    
+    gsap.set(cardRef.current, { 
+      y: 100, 
+      opacity: 0,
+      rotationX: 10,
+      scale: 0.9
+    });
+
+    // Animation Sequence
+    tl.to(headlineRef.current, { 
+      y: 0, 
+      opacity: 1, 
+      duration: 1,
+      delay: 0.2
+    })
+    .to(sublineRef.current, { 
+      y: 0, 
+      opacity: 1, 
+      duration: 0.8 
+    }, "-=0.6")
+    .to(buttonsRef.current, { 
+      y: 0, 
+      opacity: 1, 
+      duration: 0.8 
+    }, "-=0.6")
+    .to(featuresRef.current, { 
+      y: 0, 
+      opacity: 1, 
+      duration: 0.8 
+    }, "-=0.6")
+    .to(cardRef.current, {
+      y: 0,
+      opacity: 1,
+      rotationX: 0,
+      scale: 1,
+      duration: 1.2,
+      ease: "power2.out"
+    }, "-=1.0");
+
+  }, { scope: containerRef });
+
+  const scrollToPricing = () => {
+    document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  return (
+    <section ref={containerRef} className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden bg-slate-50 dark:bg-navy-900 transition-colors duration-300">
+      
+      {/* Replaced CSS blobs with WebGL */}
+      <WebGLBackground theme={theme} />
+
+      {/* Grid Overlay - Retained for texture */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(0,0,0,0.02)_1px,transparent_1px)] dark:bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)] pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           
           {/* Left: Content */}
-          <motion.div 
-            initial="hidden"
-            animate="visible"
-            variants={fadeInUp}
-            className="text-center lg:text-left"
-          >
+          <div className="text-center lg:text-left">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/60 dark:bg-white/5 border border-slate-200 dark:border-white/10 backdrop-blur-sm text-brand-gold text-sm font-medium mb-6 shadow-sm">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-gold opacity-75"></span>
@@ -37,23 +112,24 @@ export const Hero: React.FC = () => {
               Now hosting Qwen 2.5-VL & OlmOCR-2
             </div>
 
-            <h1 className="text-5xl lg:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1] mb-6 transition-colors duration-300">
+            <h1 ref={headlineRef} className="text-5xl lg:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1] mb-6 transition-colors duration-300 opacity-0">
               Rare AI Models, <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-secondary via-brand-primary to-purple-500">
                 Hosted for You.
               </span>
             </h1>
             
-            <p className="text-lg lg:text-xl text-slate-600 dark:text-slate-400 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0 transition-colors duration-300">
+            <p ref={sublineRef} className="text-lg lg:text-xl text-slate-600 dark:text-slate-400 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0 transition-colors duration-300 opacity-0">
               Access hard-to-find multimodal models like DeepSeek-OCR and exclusive VL architectures via a simple, unified API. No infrastructure hassle.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-              <Button variant="primary" size="lg" className="w-full sm:w-auto group shadow-emerald-500/20">
+            <div ref={buttonsRef} className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 opacity-0">
+              <Button onClick={scrollToPricing} variant="primary" size="lg" className="w-full sm:w-auto group shadow-emerald-500/20">
                 Get API Access
                 <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button 
+                onClick={scrollToPricing}
                 variant="outline" 
                 size="lg" 
                 className="w-full sm:w-auto border-slate-300 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 text-slate-700 dark:text-white"
@@ -62,7 +138,7 @@ export const Hero: React.FC = () => {
               </Button>
             </div>
             
-            <div className="mt-10 flex items-center justify-center lg:justify-start gap-6 text-slate-500 dark:text-slate-500 text-sm">
+            <div ref={featuresRef} className="mt-10 flex items-center justify-center lg:justify-start gap-6 text-slate-500 dark:text-slate-500 text-sm opacity-0">
               <div className="flex items-center gap-2">
                 <Terminal className="w-4 h-4" />
                 <span>Type-safe SDK</span>
@@ -76,14 +152,13 @@ export const Hero: React.FC = () => {
                 <span>Pay-per-token</span>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Right: Visual/Terminal */}
-          <motion.div
-             initial={{ opacity: 0, scale: 0.9 }}
-             animate={{ opacity: 1, scale: 1 }}
-             transition={{ duration: 0.8, delay: 0.2 }}
-             className="relative hidden lg:block"
+          <div
+             ref={cardRef}
+             className="relative hidden lg:block perspective-1000 opacity-0"
+             style={{ transformStyle: 'preserve-3d' }}
           >
              {/* Glowing backing */}
              <div className="absolute inset-0 bg-brand-primary/20 blur-3xl transform rotate-3 scale-95 opacity-50 dark:opacity-100" />
@@ -135,10 +210,9 @@ export const Hero: React.FC = () => {
              </div>
 
              {/* Floating badge */}
-             <motion.div 
-               animate={{ y: [0, -10, 0] }}
-               transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-               className="absolute -bottom-6 -right-6 bg-white dark:bg-navy-800 p-4 rounded-xl shadow-xl border border-slate-100 dark:border-white/10 flex items-center gap-3 z-20"
+             <div 
+               className="absolute -bottom-6 -right-6 bg-white dark:bg-navy-800 p-4 rounded-xl shadow-xl border border-slate-100 dark:border-white/10 flex items-center gap-3 z-20 animate-bounce"
+               style={{ animationDuration: '3s' }}
              >
                 <div className="h-10 w-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
                    <Sparkles className="h-5 w-5 text-green-600 dark:text-green-400" />
@@ -147,8 +221,8 @@ export const Hero: React.FC = () => {
                    <div className="text-xs text-slate-500">Speed</div>
                    <div className="font-bold text-slate-900 dark:text-white">45ms / token</div>
                 </div>
-             </motion.div>
-          </motion.div>
+             </div>
+          </div>
         </div>
       </div>
       
