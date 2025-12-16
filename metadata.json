@@ -1,0 +1,5 @@
+{
+  "name": "KloudiHub",
+  "description": "A friendly, accessible platform hosting rare, hard-to-find AI models like DeepSeek-OCR, Qwen 2.5-VL, and OlmOCR-2 via simple API.",
+  "requestFramePermissions": []
+}
