@@ -6,9 +6,10 @@ import { cn } from '../utils';
 interface NavbarProps {
   theme: 'light' | 'dark';
   toggleTheme: () => void;
+  onNavigate: (view: 'home' | 'docs') => void;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
+export const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme, onNavigate }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -21,7 +22,32 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
   }, []);
 
   const scrollToPricing = () => {
-    document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+    onNavigate('home');
+    setTimeout(() => {
+      document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+    setMobileMenuOpen(false);
+  };
+
+  const handleDocsClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onNavigate('docs');
+    setMobileMenuOpen(false);
+  };
+
+  const handleHomeClick = (e: React.MouseEvent, id?: string) => {
+    e.preventDefault();
+    onNavigate('home');
+    
+    // If we have an ID, wait for view transition then scroll
+    if (id) {
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      // If no ID (logo click), scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
     setMobileMenuOpen(false);
   };
 
@@ -36,7 +62,7 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
         <div className="flex items-center justify-between">
           
           {/* Logo */}
-          <div className="flex items-center gap-2 cursor-pointer group">
+          <div role="button" onClick={(e) => handleHomeClick(e)} className="flex items-center gap-2 cursor-pointer group">
             <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-primary to-purple-500 shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform">
               <Cloud className="w-6 h-6 text-white absolute" strokeWidth={2.5} />
               <Sparkles className="w-3 h-3 text-brand-gold absolute -top-1 -right-1 animate-pulse" fill="currentColor" />
@@ -46,10 +72,10 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#models" className="text-slate-600 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white transition-colors text-sm font-medium">Models</a>
-            <a href="#features" className="text-slate-600 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white transition-colors text-sm font-medium">Why Us</a>
-            <a href="#pricing" className="text-slate-600 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white transition-colors text-sm font-medium">Pricing</a>
-            <a href="#docs" className="text-slate-600 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white transition-colors text-sm font-medium">Docs</a>
+            <a href="#models" onClick={(e) => handleHomeClick(e, 'models')} className="text-slate-600 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white transition-colors text-sm font-medium">Models</a>
+            <a href="#features" onClick={(e) => handleHomeClick(e, 'features')} className="text-slate-600 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white transition-colors text-sm font-medium">Why Us</a>
+            <a href="#pricing" onClick={(e) => handleHomeClick(e, 'pricing')} className="text-slate-600 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white transition-colors text-sm font-medium">Pricing</a>
+            <button onClick={handleDocsClick} className="text-slate-600 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white transition-colors text-sm font-medium">Docs</button>
           </div>
 
           {/* Desktop CTAs */}
@@ -89,9 +115,10 @@ export const Navbar: React.FC<NavbarProps> = ({ theme, toggleTheme }) => {
       {mobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 w-full bg-white dark:bg-navy-900 border-b border-slate-200 dark:border-white/10 shadow-2xl">
           <div className="px-4 py-6 space-y-4 flex flex-col">
-            <a href="#models" className="text-slate-700 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white block" onClick={() => setMobileMenuOpen(false)}>Models</a>
-            <a href="#features" className="text-slate-700 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white block" onClick={() => setMobileMenuOpen(false)}>Why Us</a>
-            <a href="#pricing" className="text-slate-700 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white block" onClick={() => setMobileMenuOpen(false)}>Pricing</a>
+            <a href="#models" className="text-slate-700 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white block" onClick={(e) => handleHomeClick(e, 'models')}>Models</a>
+            <a href="#features" className="text-slate-700 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white block" onClick={(e) => handleHomeClick(e, 'features')}>Why Us</a>
+            <a href="#pricing" className="text-slate-700 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white block" onClick={(e) => handleHomeClick(e, 'pricing')}>Pricing</a>
+            <button onClick={handleDocsClick} className="text-left text-slate-700 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white block">Docs</button>
             <hr className="border-slate-200 dark:border-white/10" />
             <a href="#" className="text-slate-700 dark:text-slate-300 hover:text-brand-primary dark:hover:text-white block">Log in</a>
             <Button variant="primary" className="w-full" onClick={scrollToPricing}>Get API Key</Button>
